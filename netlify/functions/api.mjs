@@ -4,6 +4,7 @@ const J = (d, s = 200) => new Response(JSON.stringify(d), { status: s, headers: 
 const PRICES = { Standard: { week: 1.49, month: 2.49, life: 5 }, Pro: { week: 6.49, month: 8.99, life: 12 }, VIP: { month: 14.99, life: 25 } };
 const DUR = { week: "1 Week", month: "1 Month", life: "Lifetime" };
 const STATES = ["online", "updating", "maintenance"];
+const GSTAT = ["supported", "patched", "updating", "implementing"];
 
 async function who(req) {
   const t = (req.headers.get("authorization") || "").replace("Bearer ", "");
@@ -20,6 +21,11 @@ export default async (req) => {
   // Public: site status
   if (a === "status") {
     return J((await settings.get("status", { type: "json" })) || { state: "online", message: "" });
+  }
+
+  // Public: supported games list
+  if (a === "games") {
+    return J((await settings.get("games", { type: "json" })) || []);
   }
 
   const u = await who(req);
@@ -67,6 +73,21 @@ export default async (req) => {
     const b = await req.json();
     if (!STATES.includes(b.state)) return J({ error: "invalid state" }, 400);
     await settings.setJSON("status", { state: b.state, message: String(b.message || "").slice(0, 120), time: Date.now() });
+    return J({ ok: true });
+  }
+
+  if (a === "savegames" && req.method === "POST") {
+    const b = await req.json();
+    if (!Array.isArray(b.games) || b.games.length > 60) return J({ error: "invalid list" }, 400);
+    const clean = [];
+    for (const g of b.games) {
+      const name = String(g.name || "").trim().slice(0, 60);
+      const logo = String(g.logo || "").trim().slice(0, 500);
+      if (!name || !GSTAT.includes(g.status)) return J({ error: "invalid game" }, 400);
+      if (logo && !/^(https:\/\/|\/)/.test(logo)) return J({ error: "logo must be an https link" }, 400);
+      clean.push({ name, logo, status: g.status });
+    }
+    await settings.setJSON("games", clean);
     return J({ ok: true });
   }
 
