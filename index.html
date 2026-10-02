@@ -76,9 +76,68 @@ select,textarea,input{width:100%;background:var(--bg);border:1px solid var(--lin
 .bd.updating{background:rgba(251,191,36,.15);color:#fbbf24}.bd.implementing{background:rgba(59,130,246,.18);color:#60a5fa}
 footer{text-align:center;color:var(--mute);font-size:13px;padding:30px}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+/* ===== v2: modern motion layer ===== */
+@property --ang{syntax:"<angle>";inherits:false;initial-value:0deg}
+::selection{background:var(--a);color:#fff}
+html{scrollbar-color:var(--a) var(--bg);scrollbar-width:thin}
+#bg{position:fixed;inset:0;z-index:-1;pointer-events:none}
+body::before,body::after{content:"";position:fixed;z-index:-1;width:55vw;height:55vw;border-radius:50%;filter:blur(110px);opacity:.22;pointer-events:none}
+body::before{background:var(--a);top:-18vw;left:-12vw;animation:drift 18s ease-in-out infinite alternate}
+body::after{background:var(--b);bottom:-22vw;right:-12vw;animation:drift 23s ease-in-out infinite alternate-reverse}
+@keyframes drift{to{transform:translate(12vw,8vw) scale(1.2)}}
+@keyframes up{from{opacity:0;transform:translateY(28px) scale(.97)}}
+@keyframes float{50%{transform:translateY(-14px)}}
+@keyframes glow{0%,100%{box-shadow:0 0 50px -10px rgba(139,92,246,.5)}50%{box-shadow:0 0 110px -5px rgba(59,130,246,.7)}}
+@keyframes shift{to{background-position:200% 0}}
+@keyframes spin{to{--ang:360deg}}
+@keyframes ping{0%{box-shadow:0 0 0 0 currentColor}80%,100%{box-shadow:0 0 0 7px transparent}}
+@keyframes pop{from{opacity:0;transform:scale(.92) translateY(14px)}}
+nav{position:sticky;top:12px;z-index:6;width:calc(100% - 32px);margin:12px auto;padding:12px 20px;background:rgba(16,14,26,.55);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid var(--line);border-radius:16px;animation:up .7s both}
+.logo{display:flex;align-items:center}
+.hero>*{animation:up .9s cubic-bezier(.2,.7,.2,1) backwards}
+.hero>:nth-child(2){animation-delay:.1s}.hero>:nth-child(3){animation-delay:.2s}.hero>:nth-child(4){animation-delay:.3s}.hero>:nth-child(5){animation-delay:.4s}
+.hero img{animation:float 6s ease-in-out infinite,glow 5s ease-in-out infinite}
+.hero h1 span{background:linear-gradient(90deg,var(--a),var(--b),#c4b5fd,var(--a));background-size:200% auto;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shift 5s linear infinite}
+.badge{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:#c4b5fd;background:rgba(139,92,246,.12);border:1px solid rgba(139,92,246,.35);padding:6px 14px;border-radius:99px;margin-bottom:18px}
+.badge i,.sbar:before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor;display:inline-block;animation:ping 1.8s infinite}
+.sbar:before{margin-right:8px}
+.cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:28px}
+.btn{position:relative;overflow:hidden;transition:transform .2s,box-shadow .25s,border-color .2s}
+.btn:hover{transform:translateY(-2px)}.btn:active{transform:scale(.97)}
+.btn.primary{background-size:200% auto;box-shadow:0 8px 30px -8px var(--a)}
+.btn.primary:hover{box-shadow:0 10px 40px -4px var(--a);background-position:right center}
+.btn:after{content:"";position:absolute;top:0;left:-80%;width:50%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.28),transparent);transform:skewX(-20deg);transition:left .6s}
+.btn:hover:after{left:130%}
+.toggle{backdrop-filter:blur(10px);animation:up .8s .35s backwards}
+.toggle button{transition:color .25s,background .3s,box-shadow .3s}
+.toggle button:hover{color:var(--text)}.toggle button[aria-pressed=true]{box-shadow:0 4px 20px -4px var(--a)}
+.card{position:relative;background:rgba(16,14,26,.7);backdrop-filter:blur(10px);transition:transform .25s ease-out,border-color .3s,box-shadow .3s;animation:up .7s cubic-bezier(.2,.7,.2,1) backwards;transform-style:preserve-3d}
+.card:nth-child(2){animation-delay:.1s}.card:nth-child(3){animation-delay:.2s}
+.card:hover{border-color:rgba(139,92,246,.6);box-shadow:0 20px 60px -25px var(--a)}
+.card:before{content:"";position:absolute;inset:0;border-radius:inherit;background:radial-gradient(320px circle at var(--mx,50%) var(--my,0%),rgba(139,92,246,.2),transparent 60%);opacity:0;transition:opacity .3s;pointer-events:none}
+.card:hover:before{opacity:1}
+.card.pop{border:1px solid transparent;background:linear-gradient(#100e1a,#100e1a) padding-box,conic-gradient(from var(--ang),var(--a),var(--b),#c4b5fd,var(--a)) border-box;animation:up .7s .1s cubic-bezier(.2,.7,.2,1) backwards,spin 6s linear infinite}
+.card.pop:after{content:"MOST POPULAR";position:absolute;top:-11px;right:22px;font-size:10px;font-weight:800;letter-spacing:.08em;background:linear-gradient(90deg,var(--a),var(--b));padding:3px 10px;border-radius:99px}
+.price{transition:transform .3s}.card:hover .price{transform:scale(1.05);transform-origin:left}
+.card li{transition:transform .2s,color .2s}.card:hover li{color:var(--text)}.card li:hover{transform:translateX(4px)}
+.gt{backdrop-filter:blur(10px)}
+.gt tbody tr{animation:up .5s backwards;transition:background .25s}
+.gt tbody tr:nth-child(2){animation-delay:.05s}.gt tbody tr:nth-child(3){animation-delay:.1s}.gt tbody tr:nth-child(4){animation-delay:.15s}.gt tbody tr:nth-child(n+5){animation-delay:.2s}
+.gt tbody tr:hover{background:rgba(139,92,246,.08)}
+.gm img{transition:transform .3s}.gt tr:hover .gm img{transform:scale(1.12) rotate(-4deg)}
+.bd{display:inline-flex;align-items:center;gap:7px}
+.bd:before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor;animation:ping 1.8s infinite}
+.bd.patched:before{animation:none}
+.modal{backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.modal.open .box{animation:pop .35s cubic-bezier(.2,.9,.3,1.2)}
+.reveal{opacity:0;transform:translateY(34px);transition:opacity .9s,transform .9s cubic-bezier(.2,.7,.2,1)}
+.reveal.in{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}}
 </style>
 </head>
 <body>
+<canvas id="bg" aria-hidden="true"></canvas>
 
 <div class="sbar" id="statusBar" hidden></div>
 <nav>
@@ -88,8 +147,10 @@ footer{text-align:center;color:var(--mute);font-size:13px;padding:30px}
 
 <header class="hero">
   <img src="logo.jpg" alt="KoSMO" width="300" height="300" style="max-width:70vw;height:auto;border-radius:24px;margin-bottom:10px;box-shadow:0 0 80px -10px rgba(139,92,246,.6)">
+  <div class="badge"><i></i>Instant activation via Discord</div>
   <h1>Welcome to <span>KoSMO Hub</span></h1>
   <p>Pick a plan, open a ticket on our Discord and get activated fast. Weekly, monthly or lifetime.</p>
+  <div class="cta"><a class="btn primary" href="#plans">Get started</a><a class="btn" href="#games">Supported games</a></div>
 </header>
 
 <div class="toggle" role="group" aria-label="Duration">
@@ -100,7 +161,7 @@ footer{text-align:center;color:var(--mute);font-size:13px;padding:30px}
 
 <main class="grid" id="plans"></main>
 
-<section class="games">
+<section class="games" id="games">
   <h2>Supported Roblox Games</h2>
   <table class="gt"><thead><tr><th>Game</th><th>Status</th></tr></thead><tbody id="gamesBody"></tbody></table>
 </section>
@@ -294,6 +355,33 @@ $("#gSave").onclick=async()=>{
 };
 
 renderPlans(); loadUser(); loadStatus(); loadGames();
+
+/* ===== v2: effects ===== */
+(()=>{
+  const still=matchMedia("(prefers-reduced-motion: reduce)").matches;
+  // scroll reveal
+  const els=document.querySelectorAll(".games,.admin,footer");els.forEach(e=>e.classList.add("reveal"));
+  const io=new IntersectionObserver(l=>l.forEach(x=>{if(x.isIntersecting){x.target.classList.add("in");io.unobserve(x.target)}}),{threshold:.08});
+  els.forEach(e=>io.observe(e));setTimeout(()=>els.forEach(e=>e.classList.add("in")),3000);
+  if(still)return;
+  // card tilt + spotlight
+  const P=$("#plans");
+  P.addEventListener("pointermove",e=>{const c=e.target.closest(".card");if(!c)return;const b=c.getBoundingClientRect(),x=e.clientX-b.left,y=e.clientY-b.top;
+    c.style.setProperty("--mx",x+"px");c.style.setProperty("--my",y+"px");
+    c.style.transform=`perspective(900px) rotateX(${(.5-y/b.height)*8}deg) rotateY(${(x/b.width-.5)*8}deg) translateY(-4px)`});
+  P.addEventListener("pointerout",e=>{const c=e.target.closest(".card");if(c)c.style.transform=""});
+  // particle network
+  const c=$("#bg"),g=c.getContext("2d");let w,h,N=[],m={x:-999,y:-999};
+  const rs=()=>{w=c.width=innerWidth;h=c.height=innerHeight;N=Array.from({length:Math.min(90,w/14|0)},()=>({x:Math.random()*w,y:Math.random()*h,vx:(Math.random()-.5)*.25,vy:(Math.random()-.5)*.25,r:Math.random()*1.4+.3}))};
+  addEventListener("resize",rs);addEventListener("pointermove",e=>{m.x=e.clientX;m.y=e.clientY});rs();
+  (function f(){g.clearRect(0,0,w,h);
+    for(const p of N){p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>w)p.vx*=-1;if(p.y<0||p.y>h)p.vy*=-1;
+      const d=Math.hypot(p.x-m.x,p.y-m.y);if(d<140&&d>0){p.x+=(p.x-m.x)/d*.8;p.y+=(p.y-m.y)/d*.8}
+      g.fillStyle="rgba(196,170,255,.8)";g.beginPath();g.arc(p.x,p.y,p.r,0,7);g.fill()}
+    for(let i=0;i<N.length;i++)for(let j=i+1;j<N.length;j++){const d=Math.hypot(N[i].x-N[j].x,N[i].y-N[j].y);
+      if(d<110){g.strokeStyle=`rgba(139,92,246,${.2*(1-d/110)})`;g.beginPath();g.moveTo(N[i].x,N[i].y);g.lineTo(N[j].x,N[j].y);g.stroke()}}
+    requestAnimationFrame(f)})();
+})();
 </script>
 </body>
 </html>
